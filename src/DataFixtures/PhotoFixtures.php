@@ -12,12 +12,11 @@ class PhotoFixtures extends Fixture
             for ($i = 1; $i <=5; $i++){
                 $photo = new Photo();
                 $photo -> setTitle('Photo numéro' .$i);
-                $photo -> setPostAt((new \DateTimeImmutable()) -> add(\DateTimeImmutable:: createFromDateString('-'.$i.'week')));
+                $photo -> setPostAt((new \DateTimeImmutable()) -> add(\DateInterval:: createFromDateString('-'.$i.'week')));
                 $manager -> persist($photo); 
 
             }
             
-
         $manager->flush();
     }
 }
