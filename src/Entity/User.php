@@ -3,11 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -29,6 +33,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 150)]
     private ?string $pseudo = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Photo::class)]
+    private Collection $photos;
+
+    public function __construct()
+    {
+        $this->photos = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -108,6 +120,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Photo>
+     */
+    public function getPhotos(): Collection
+    {
+        return $this->photos;
+    }
+
+    public function addPhoto(Photo $photo): self
+    {
+        if (!$this->photos->contains($photo)) {
+            $this->photos->add($photo);
+            $photo->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhoto(Photo $photo): self
+    {
+        if ($this->photos->removeElement($photo)) {
+            // set the owning side to null (unless already changed)
+            if ($photo->getUser() === $this) {
+                $photo->setUser(null);
+            }
+        }
 
         return $this;
     }
