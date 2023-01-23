@@ -47,11 +47,11 @@ class PhotoController extends AbstractController
     #[Route('/photo/delete/{id}', name: 'photo.delete')]
     public function delete(PhotoRepository $photoRepository, HttpFoundationRequest $request, EntityManagerInterface $manager): Response
     {
-       $photo = $photoRepository-> find ($request->get('id'));
+       $photo = $photoRepository->find($request->get('id')); 
     //    $manager = $this->getDoctrine()->getManager();     
        $manager ->remove($photo);
        $manager->flush();
-       return $this->redirectToRoute('photo.manager');
+       return $this->redirectToRoute('photo.manage');
     }
 
 
