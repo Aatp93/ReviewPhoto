@@ -19,6 +19,10 @@ class Photo
     #[ORM\Column]
     private ?\DateTimeImmutable $post_at = null;
 
+    #[ORM\ManyToOne(inversedBy: 'photos')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +48,18 @@ class Photo
     public function setPostAt(\DateTimeImmutable $post_at): self
     {
         $this->post_at = $post_at;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
