@@ -54,5 +54,11 @@ class PhotoController extends AbstractController
        return $this->redirectToRoute('photo.manage');
     }
 
+    #[ROUTE('/photo/add', name:'photo.add')]
+    public function add(){
+                    
+        return $this->render('photo/add.html.twig');
+
+    }
 
 }
