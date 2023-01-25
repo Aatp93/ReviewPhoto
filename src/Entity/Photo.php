@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use App\Repository\PhotoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
+#[Vich\Uploadable]
 class Photo
 {
     #[ORM\Id]
@@ -15,6 +18,21 @@ class Photo
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
+
+    #[Vich\UploadableField(
+        mapping: 'uploaded_photos',
+        fileNameProperty: 'imageName',
+        size: 'imageSize'
+    )]
+    private ?File $imageFile = null;
+
+
+    #[ORM\Column(length: 255)]
+    private ?string $imageName = null;
+
+    
+    #[ORM\Column(type: 'integer')]
+    private ?int $imageSize = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $post_at = null;
@@ -42,7 +60,7 @@ class Photo
 
     public function getPostAt(): ?string
     {
-        return date_format($this->post_at,'Y-m-d H:i:s');
+        return date_format($this->post_at, 'Y-m-d H:i:s');
     }
 
     public function setPostAt(\DateTimeImmutable $post_at): self
@@ -60,6 +78,65 @@ class Photo
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+
+    /**
+     * Get the value of imageFile
+     */
+    public function getImageFile()
+    {
+        return $this->imageFile;
+    }
+
+
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+        if (null !== $imageFile) {
+            $this->post_at = new \DateTimeImmutable();
+        }
+    }
+
+    /**
+     * Get the value of imageName
+     */
+    public function getImageName()
+    {
+        return $this->imageName;
+    }
+
+    /**
+     * Set the value of imageName
+     *
+     * @return  self
+     */
+    public function setImageName($imageName)
+    {
+        $this->imageName = $imageName;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of imageSize
+     */
+    public function getImageSize()
+    {
+        return $this->imageSize;
+    }
+
+    /**
+     * Set the value of imageSize
+     *
+     * @return  self
+     */
+    public function setImageSize($imageSize)
+    {
+        $this->imageSize = $imageSize;
 
         return $this;
     }
