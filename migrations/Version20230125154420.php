@@ -21,7 +21,7 @@ final class Version20230125154420 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE photo ADD image_name VARCHAR(255) NOT NULL, ADD image_size INT NOT NULL');
-        // $this->addSql('ALTER TABLE photo ADD CONSTRAINT FK_14B78418A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
+        $this->addSql('ALTER TABLE photo ADD CONSTRAINT FK_14B78418A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
         // $this->addSql('CREATE INDEX IDX_14B78418A76ED395 ON photo (user_id)');
     }
 

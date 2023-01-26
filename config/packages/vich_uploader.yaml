@@ -6,3 +6,5 @@ vich_uploader:
            uri_prefix: /photos
            upload_destination: '%kernel.project_dir%/public/photos'
            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+           delete_on_remove: true #Pour enlever la photo quand on remove l'entrée de la db 
+             

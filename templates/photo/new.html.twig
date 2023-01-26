@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1> Ajout d'une photo </h1> 
+    {{form_start(newForm)}}
+    {{ form_row(newForm.title) }}
+    {{ form_row(newForm.imageFile) }}
+
+
+    <button type="submit" class="btn btn-primary">Ajouter une photo</button>
+	{{ form_end(newForm) }}
+{% endblock %}

@@ -7,7 +7,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-8">
-					<img src="/photos/empty.jpg" alt="card-img-top" style="width: 100%; height: auto;">
+					<img src="{{vich_uploader_asset(photo,'imageFile')}}" alt="card-img-top" style="width: 100%; height: auto;">
 				</div>
 				<div class="col-md-4">
 					<h1>{{photo.title }}</h1>
@@ -21,7 +21,15 @@
 						<a href="#" class="btn btn-primary">Mettre un commentaire</a>
 						<div id="commentForm" class="mt-4">
 							<p>formulaire de saisie du commentaire</p>
+						{{form_start(form)}}
+						<div class="row">
+						<div class="col">{{ form_row(form.content) }}</div>
 						</div>
+						 <div class="form-group">
+						 <button class="btn btn-primary">Envoyer</button>
+						 </div>
+						 {{ form_end(form) }}
+						 </div>
 					{% endif %}
 				</div>
 			</div>
@@ -33,16 +41,18 @@
 				<h2>Commentaires</h2>
 				<table class="table table-striped">
 					<tr>
-						<th>Commentée par</th>
+						<th>Commentée par </th>
 						<th>Date</th>
 						<th>Commentaire</th>
 					</tr>
+					{% for comment in photo.comments %}
 					<tr>
-						<td>le pseudo</td>
-						<td>la date de création</td>
+						<td>{{ comment.user.pseudo }}</td>
+						<td>{{ comment.CreatedAt|date("d/m/Y") }}</td>
 
-						<td>le commentaire</td>
+						<td>{{ comment.content }}</td>
 					</tr>
+					{% endfor %}
 				</table>
 			</div>
 		</div>

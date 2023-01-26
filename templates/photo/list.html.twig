@@ -25,7 +25,7 @@
 
 				<div class="col-3">
 					<div class="card">
-						<img class="card-img-top" src=" {{ asset('photos/empty.jpg') }}" alt="img defaut">
+						<img class="card-img-top" src=" {{ vich_uploader_asset(photo,'imageFile') }}" alt="Photo de {{photo.user.pseudo}}">
 						<div class="card-boby">
 							<h5 class="card-title">
 								<a href="{{path ('photo.show', {id:photo.id}) }}">{{ photo.title }}</a>
@@ -34,7 +34,7 @@
 							<p class="card-text">Postée le :
 								{{ photo.postAt }}</p>	
 							<div class="text-primary" style="font-weight: bold; font-size:
-																                                                        1.2rem;">commentaires : 0</div>
+																                                                        1.2rem;">commentaires : {{ photo.comments|length }}</div>
 						</div>
 					</div>
 				</div>

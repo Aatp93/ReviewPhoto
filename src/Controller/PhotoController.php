@@ -2,14 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Photo;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Form\Photo\CommentType;
+use App\Form\Photo\NewPhotoType;
+use App\Repository\PhotoRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\PhotoRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Loader\Configurator\request;
 use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
-use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 
 class PhotoController extends AbstractController
 {
@@ -29,36 +32,70 @@ class PhotoController extends AbstractController
     #[Route('/photo/manage', name: 'photo.manage')]
     public function manage()
     {
-        $user = $this ->getUser(); 
-        $photos = $user ->getPhotos();
-        return $this-> render('photo/manage.html.twig', ['photos'=>$photos]);
+        $user = $this->getUser();
+        $photos = $user->getPhotos();
+        return $this->render('photo/manage.html.twig', ['photos' => $photos]);
     }
 
     #[Route('/photo/show/{id}', name: 'photo.show')]
-    public function show(PhotoRepository $photoRepository, HttpFoundationRequest $request): Response
+    public function show(HttpFoundationRequest $request, Photo $photo, EntityManagerInterface $em): Response
     {
+        if ($this->getUser()) {
+            $user = $this->getUser();
+            $comment = new Comment();
+            $comment->setUser($user);
+            $comment->setPhoto($photo);
+            $comment->setCreatedAt(new \DateTimeImmutable());
 
-        $photo = $photoRepository->find($request->get('id'));
-        return $this->render('photo/show.html.twig', ['photo' => $photo]);
+            $form = $this->createForm(CommentType::class, $comment);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em->persist($comment);
+                $em->flush();
+                return $this->redirectToRoute('photo/show', ['id' => $photo->getId()]);
+            } else {
+                return $this->render('photo/show.html.twig', ['photo' => $photo, 'form' => $form->createView()]);
+            }
+        } else {
+            return $this->render('photo/show.html.twig', ['photo' => $photo]);
+        }
     }
 
-   
+
 
     #[Route('/photo/delete/{id}', name: 'photo.delete')]
     public function delete(PhotoRepository $photoRepository, HttpFoundationRequest $request, EntityManagerInterface $manager): Response
     {
-       $photo = $photoRepository->find($request->get('id')); 
-    //    $manager = $this->getDoctrine()->getManager();     
-       $manager ->remove($photo);
-       $manager->flush();
-       return $this->redirectToRoute('photo.manage');
+        $photo = $photoRepository->find($request->get('id'));
+        //    $manager = $this->getDoctrine()->getManager();     
+        $manager->remove($photo);
+
+        $manager->flush();
+        return $this->redirectToRoute('photo.manage');
     }
 
-    #[ROUTE('/photo/add', name:'photo.add')]
-    public function add(){
-                    
-        return $this->render('photo/add.html.twig');
+    #[ROUTE('/photo/new', name: 'photo.new')]
+    public function new(EntityManagerInterface $manager, HttpFoundationRequest $request)
+    {
 
+        $photo = new Photo();
+        $form = $this->createForm(NewPhotoType::class, $photo);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $photo->setUser($this->getUser());
+            $photo->setPostAt(new \DateTimeImmutable());
+            $manager->persist($photo);
+            $this->addFlash('succes', 'Votre photo a bien été ajouté');
+            $manager->flush();
+            return $this->redirectToRoute('photo.manage');
+        }
+
+
+        return $this->render('photo/new.html.twig', [
+            'newForm' => $form->createView()
+        ]);
     }
-
 }
