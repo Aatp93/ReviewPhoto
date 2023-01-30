@@ -16,7 +16,7 @@
 						<tr>
 							<td>{{ photo.title }}</td>
 							<td>{{ photo.postAt }}</td>
-							<td>0</td>
+							<td> {{ photo.comments|length }}</td>
 							<td>
 								<a href="{{ path("photo.delete", {id: photo.id}) }}" class="btn btn-secondary">
 									Supprimer</a>

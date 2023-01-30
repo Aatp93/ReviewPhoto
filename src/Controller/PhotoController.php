@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Loader\Configurator\request;
 use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
 
 class PhotoController extends AbstractController
@@ -53,7 +52,7 @@ class PhotoController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $em->persist($comment);
                 $em->flush();
-                return $this->redirectToRoute('photo/show', ['id' => $photo->getId()]);
+                return $this->redirectToRoute('photo.show', ['id' => $photo->getId()]);
             } else {
                 return $this->render('photo/show.html.twig', ['photo' => $photo, 'form' => $form->createView()]);
             }
