@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
 
 class PhotoController extends AbstractController
@@ -63,15 +64,15 @@ class PhotoController extends AbstractController
 
 
 
-    #[Route('/photo/delete/{id}', name: 'photo.delete')]
-    public function delete(PhotoRepository $photoRepository, HttpFoundationRequest $request, EntityManagerInterface $manager): Response
+    #[Route('/photo/delete/{id}', name: 'photo.delete', condition: "context.getMethod() in ['DELETE', 'GET']")]
+    public function delete(Photo $photo, EntityManagerInterface $manager): JsonResponse
     {
-        $photo = $photoRepository->find($request->get('id'));
-        //    $manager = $this->getDoctrine()->getManager();     
-        $manager->remove($photo);
-
-        $manager->flush();
-        return $this->redirectToRoute('photo.manage');
+        // $photo = $photoRepository->find($request->get('id'));
+        // //    $manager = $this->getDoctrine()->getManager();     
+        // $manager->remove($photo);
+        return new JsonResponse(['sucess' => 'Votre photo a été suprrimé', 'id' => $photo->getId()]);
+        // $manager->flush();
+        // return $this->redirectToRoute('photo.manage');
     }
 
     #[ROUTE('/photo/new', name: 'photo.new')]

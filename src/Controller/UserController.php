@@ -12,10 +12,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use App\Entity\User;
-use App\Form\User\CreateFormType; 
+use App\Form\User\CreateFormType;
+use App\Repository\PhotoRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class UserController extends AbstractController
-{
+{   
+    #[IsGranted('ROLE_INTERNAUTE')]
+    #[ROUTE(path:'/dashboard' , name:'user.danshboard')]
+    public function dashboard(PhotoRepository $photoRepository): Response
+    {
+      $user = $this->getUser();   
+      $nbr =  $photoRepository->getNbrPhoto(); 
+
+      return $this->render('user/dashboard.html.twig0', ['nbrPhoto' => $nbr]); 
+
+    }
+
+
     #[Route(path: '/login', name: 'user.login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -52,7 +66,7 @@ class UserController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
-
+            $user->setRoles(['ROLE_INTERNAUTE']);
             $entityManager->persist($user);
             $entityManager->flush();
             // do anything else you need here, like send an email
@@ -68,4 +82,6 @@ class UserController extends AbstractController
             'CreateForm' => $form->createView(),
         ]);
     }
+
+    
 }

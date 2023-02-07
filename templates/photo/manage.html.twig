@@ -13,12 +13,13 @@
 							<th>nb commentaires</th>
 							<th></th>
 						</tr>
-						<tr>
+						<tr id="{{'tr'~ photo.id }}">
 							<td>{{ photo.title }}</td>
 							<td>{{ photo.postAt }}</td>
-							<td> {{ photo.comments|length }}</td>
 							<td>
-								<a href="{{ path("photo.delete", {id: photo.id}) }}" class="btn btn-secondary">
+								{{ photo.Comments|length }}</td>
+							<td>
+								<a href="{{ path("photo.delete", {id: photo.id}) }}" data-delete class="btn btn-secondary">
 									Supprimer</a>
 							</td>
 						</tr>
@@ -30,4 +31,30 @@
 			</div>
 		</div>
 	</div>
+	<script>
+		links = document.querySelectorAll('[data-delete]');
+
+for (let link of links) {
+link.addEventListener('click', function (event) {
+event.preventDefault();
+
+	if (confirm('Voulez-vous supprimer cette photo')) {
+			fetch(this.getAttribute('href'), {
+			method: 'GET',
+			headers: {
+			"X-Requested-Width": "XMLHttpRequest" "Content-Type": "application/json"
+																						}
+		}).then(function (response) {
+				return response.json();
+				}).then(function (data) {
+					console.log(data);
+				let idPhoto = 'tr' + data.id;
+				let tr = document.querySelector('#' + idPhoto)
+				tr.remove();
+				alert(data.success);
+		})
+		}
+	});
+}
+	</script>
 {% endblock %}

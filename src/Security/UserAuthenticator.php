@@ -47,7 +47,7 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // For example:
-        return new RedirectResponse($this->urlGenerator->generate('photo.list'));
+        return new RedirectResponse($this->urlGenerator->generate('user.dashboard'));
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 

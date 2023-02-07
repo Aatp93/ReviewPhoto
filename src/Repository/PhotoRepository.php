@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Photo;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,6 +40,15 @@ class PhotoRepository extends ServiceEntityRepository
         }
     }
 
+    public function getNbrPhoto(User $user): int
+    {
+        return $this->createQueryBuilder('p')
+                    ->andWhere('p.user = userId')
+                    ->setParameter('userId', $user)
+                    ->select('COUNT(p.id) AS nbr')
+                    ->getQuery()
+                    ->getSingleScalarResult();
+    }
 //    /**
 //     * @return Photo[] Returns an array of Photo objects
 //     */
